@@ -3,12 +3,6 @@ namespace Seahorse\Tactician;
 
 use Aura\Di\Container;
 use Aura\Di\ContainerConfig;
-use League\Tactician\CommandBus;
-use League\Tactician\Container\ContainerLocator;
-use League\Tactician\Handler\CommandHandlerMiddleware;
-use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
-use League\Tactician\Handler\MethodNameInflector\HandleInflector;
-use League\Tactician\Plugins\LockingMiddleware;
 
 class Config extends ContainerConfig
 {
@@ -19,18 +13,18 @@ class Config extends ContainerConfig
             'commandNameToHandlerMap' => $di->lazyValue('commandsToHandlersMap'),
         ];
 
-        $di->set('league:tactician/commandbus', function() use ($di) {
-            $commandHandlerMiddleware = new CommandHandlerMiddleware(
-                new ClassNameExtractor(),
-                $di->newInstance('League\Tactician\Container\ContainerLocator'),
-                new HandleInflector()
-            );
-            return new CommandBus(
-                [
-                    new LockingMiddleware(),
-                    $commandHandlerMiddleware,
-                ]
-            );
-        });
+        $di->params['League\Tactician\Handler\CommandHandlerMiddleware'] = [
+            'commandNameExtractor' => $di->lazyNew('League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor'),
+            'handlerLocator'       => $di->lazyNew('League\Tactician\Container\ContainerLocator'),
+            'methodNameInflector'  => $di->lazyNew('League\Tactician\Handler\MethodNameInflector\HandleInflector')
+        ];
+
+        $di->params['League\Tactician\CommandBus']['middleware'] = $di->lazyArray([
+                $di->lazyNew('League\Tactician\Plugins\LockingMiddleware'),
+                $di->lazyNew('League\Tactician\Handler\CommandHandlerMiddleware'),
+            ]
+        );
+
+        $di->set('league:tactician/commandbus', $di->lazyNew('League\Tactician\CommandBus'));
     }
 }
