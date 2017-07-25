@@ -1,0 +1,14 @@
+{
+    "name": "seahorse/aura-di-tactician",
+    "description": "A simple aura/di container config for league/tactician",
+    "license": "MIT",
+    "require": {
+        "league/tactician": "~1.0",
+        "league/tactician-container": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Seahorse\\Tactician\\": "src/"
+        }
+    }
+}
