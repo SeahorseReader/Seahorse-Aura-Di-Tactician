@@ -9,7 +9,7 @@ Add `Seahorse\Tactician\Config` to your [ContainerBuilder](https://github.com/au
 
 ## Mapping commands to handlers
 
-In your `ContainerBuilder` you need to map commands to handlers.
+In your `ContainerBuilder` configuration class you need to map commands to handlers.
 
 ```php
 $di->set('service-name', $di->lazyNew('Your\Handler'));
@@ -21,7 +21,7 @@ $di->values['commandsToHandlersMap'] = [
 
 ## Adding middleware
 
-Override the middleware params in your `ContainerBuilder`.
+Override the middleware params in your `ContainerBuilder` configuration class.
 
 ```php
 $di->params['League\Tactician\CommandBus']['middleware'] = $di->lazyArray([
